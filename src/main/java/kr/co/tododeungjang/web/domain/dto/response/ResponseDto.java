@@ -1,4 +1,4 @@
-package kr.co.tododeungjang.web.dto.response;
+package kr.co.tododeungjang.web.domain.dto.response;
 
 import kr.co.tododeungjang.web.common.ResponseCode;
 import kr.co.tododeungjang.web.common.ResponseMessage;
