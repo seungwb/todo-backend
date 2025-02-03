@@ -7,6 +7,7 @@ import kr.co.tododeungjang.web.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,7 +22,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.io.IOException;
 
-@Configurable
+@Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
@@ -36,8 +37,8 @@ public class WebSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/api/v1/auth/**", "/api/v1/search/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
+                .requestMatchers("/", "/api/auth/**", "/api/search/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/calendar/**").permitAll()
                 .anyRequest().authenticated()
                 ).exceptionHandling(handler -> handler.authenticationEntryPoint(new FailedAuthenticationEntryPoint()));
 
