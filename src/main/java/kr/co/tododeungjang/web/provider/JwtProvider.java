@@ -33,6 +33,19 @@ public class JwtProvider {
 
         return jwt;
     }
+    // expirationTime getter
+    public int getExpirationTime(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        Date expiration = claims.getExpiration();
+        long expirationInSeconds = (expiration.getTime() - System.currentTimeMillis()) / 1000; // 초 단위 변환
+
+        return (int) expirationInSeconds;
+    }
 
     //JWT 검증 메서드
     public String validate(String jwt){
