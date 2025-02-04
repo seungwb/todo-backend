@@ -1,9 +1,12 @@
 package kr.co.tododeungjang.web.service.implement;
 
+import kr.co.tododeungjang.web.domain.dto.request.auth.SignInRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.auth.SignUpRequestDto;
 import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
+import kr.co.tododeungjang.web.domain.dto.response.auth.SignInResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.auth.SignUpResponseDto;
 import kr.co.tododeungjang.web.domain.entity.MemberEntity;
+import kr.co.tododeungjang.web.provider.JwtProvider;
 import kr.co.tododeungjang.web.repository.MemberRepository;
 import kr.co.tododeungjang.web.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,8 @@ public class AuthServiceImplement implements AuthService {
 
     private final MemberRepository memberRepository;
 
+    private final JwtProvider jwtProvider;
+
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Override
     public ResponseEntity<? super SignUpResponseDto> signUp(SignUpRequestDto dto) {
@@ -34,7 +39,7 @@ public class AuthServiceImplement implements AuthService {
                 return SignUpResponseDto.duplicateEmail();
             }
             String phone = dto.getPhone();
-            boolean existedPhone = memberRepository.existsByEmail(email);
+            boolean existedPhone = memberRepository.existsByPhone(phone);
             if (existedPhone){
                 return SignUpResponseDto.duplicatePhone();
             }
@@ -61,5 +66,34 @@ public class AuthServiceImplement implements AuthService {
             return ResponseDto.databaseError();
         }
         return SignUpResponseDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto dto) {
+        String token = null;
+        int expirationTime = 0;
+        try {
+            String email = dto.getEmail();
+            MemberEntity memberEntity = memberRepository.findByEmail(email);
+            if(memberEntity == null){
+                return SignInResponseDto.signInFailed();
+            }
+
+            String password = dto.getPassword();
+            String encodedPassword = memberEntity.getPassword();
+
+            boolean isMatched = passwordEncoder.matches(password, encodedPassword);
+            if(!isMatched){
+                return SignInResponseDto.signInFailed();
+            }
+
+            token = jwtProvider.create(email);
+            expirationTime = jwtProvider.getExpirationTime(token);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return SignInResponseDto.success(token, expirationTime);
     }
 }
