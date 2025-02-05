@@ -3,13 +3,15 @@ package kr.co.tododeungjang.web.domain.dto.response.auth;
 import kr.co.tododeungjang.web.common.ResponseCode;
 import kr.co.tododeungjang.web.common.ResponseMessage;
 import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+@Getter
 public class SignInResponseDto extends ResponseDto {
 
-    private String token;
-    private int expirationTime;
+    private final String token;
+    private final int expirationTime;
 
     private SignInResponseDto(String token, int expirationTime) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
