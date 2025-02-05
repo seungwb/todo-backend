@@ -30,13 +30,6 @@ public class AuthController {
     @PostMapping("/sign-in")
     public ResponseEntity<? super SignInResponseDto> signIn(
             @RequestBody @Valid SignInRequestDto requestBody){
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(authService.signIn(requestBody));
-            System.out.println(json); // ✅ JSON 형태로 출력
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return authService.signIn(requestBody);
     }
 }
