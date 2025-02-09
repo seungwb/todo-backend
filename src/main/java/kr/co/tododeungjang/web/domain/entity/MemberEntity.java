@@ -29,6 +29,6 @@ public class MemberEntity {
 
     private String password;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime joinDate;
 }

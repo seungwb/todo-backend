@@ -37,7 +37,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             String email = jwtProvider.validate(token);
-
             if(email == null){
                 filterChain.doFilter(request, response);
                 return;

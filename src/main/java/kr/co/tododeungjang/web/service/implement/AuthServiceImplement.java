@@ -86,7 +86,7 @@ public class AuthServiceImplement implements AuthService {
             if(!isMatched){
                 return SignInResponseDto.signInFailed();
             }
-
+            System.out.println("로그인 email = " + email);
             token = jwtProvider.create(email);
             expirationTime = jwtProvider.getExpirationTime(token);
         }catch (Exception e){

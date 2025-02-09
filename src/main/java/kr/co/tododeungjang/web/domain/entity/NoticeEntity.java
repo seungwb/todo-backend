@@ -26,7 +26,7 @@ public class NoticeEntity {
 
     private String content;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime regDate;
 
     private Long memberId;
