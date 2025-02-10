@@ -1,7 +1,6 @@
-package kr.co.tododeungjang.web.domain.dto.request.auth;
+package kr.co.tododeungjang.web.domain.dto.request.schedule;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ScheduleRequestDto {
+public class PostScheduleRequestDto {
     @NotBlank
     private String title;
 

@@ -1,9 +1,7 @@
 package kr.co.tododeungjang.web.provider;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.security.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;

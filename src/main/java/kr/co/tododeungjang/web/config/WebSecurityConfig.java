@@ -37,8 +37,8 @@ public class WebSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/api/auth/**", "/api/calendar/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/calendar/**").permitAll()
+                .requestMatchers("/", "/api/auth/**", "/api/schedule/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/schedule/**").permitAll()
                 .anyRequest().authenticated()
                 ).exceptionHandling(handler -> handler.authenticationEntryPoint(new FailedAuthenticationEntryPoint()));
 
