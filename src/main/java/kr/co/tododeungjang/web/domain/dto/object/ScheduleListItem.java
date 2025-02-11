@@ -1,22 +1,23 @@
 package kr.co.tododeungjang.web.domain.dto.object;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CalendarListItem {
-    private Long id;
+public class ScheduleListItem {
+    @NotBlank
     private String name;
+
     private String title;
     private String content;
-    private String startDate;
-    private String endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private String location;
-    private String regDate;
-    private String image;
+    private LocalDateTime regDate;
 }

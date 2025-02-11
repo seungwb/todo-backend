@@ -2,6 +2,7 @@ package kr.co.tododeungjang.web.controller;
 
 import jakarta.validation.Valid;
 import kr.co.tododeungjang.web.domain.dto.request.schedule.PostScheduleRequestDto;
+import kr.co.tododeungjang.web.domain.dto.response.schedule.GetScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.schedule.PostScheduleResponseDto;
 import kr.co.tododeungjang.web.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,13 @@ public class ScheduleController {
             @Valid @RequestBody PostScheduleRequestDto requestBody,
             @AuthenticationPrincipal String email
             ){
-        return scheduleService.schedule(requestBody, email);
+        return scheduleService.saveSchedule(requestBody, email);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<? super GetScheduleResponseDto> getSchedule(
+            @AuthenticationPrincipal String email
+    ){
+        return scheduleService.getSchedule(email);
     }
 }
