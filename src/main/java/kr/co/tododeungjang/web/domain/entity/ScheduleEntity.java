@@ -2,17 +2,15 @@ package kr.co.tododeungjang.web.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import kr.co.tododeungjang.web.domain.dto.request.schedule.UpdateScheduleRequestDto;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Entity
 @Table(name = "schedule")
 public class ScheduleEntity {
@@ -37,4 +35,11 @@ public class ScheduleEntity {
 
     private Long memberId;
 
+    public void update(UpdateScheduleRequestDto dto) {
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.location = dto.getLocation();
+        this.startDate = dto.getStartDate();
+        this.endDate = dto.getEndDate();
+    }
 }
