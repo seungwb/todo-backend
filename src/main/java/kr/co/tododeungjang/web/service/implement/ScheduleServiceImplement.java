@@ -3,6 +3,7 @@ package kr.co.tododeungjang.web.service.implement;
 import kr.co.tododeungjang.web.domain.dto.object.ScheduleListItem;
 import kr.co.tododeungjang.web.domain.dto.request.schedule.PostScheduleRequestDto;
 import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
+import kr.co.tododeungjang.web.domain.dto.response.schedule.DeleteScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.schedule.GetScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.schedule.PostScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.entity.ScheduleEntity;
@@ -18,9 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -59,15 +58,16 @@ public class ScheduleServiceImplement implements ScheduleService {
 
     @Override
     public ResponseEntity<? super GetScheduleResponseDto> getSchedule(String email) {
-
+        List<ScheduleListItem> scheduleListItems;
         try {
             MemberEntity member = memberRepository.findByEmail(email);
 
-            List<ScheduleListViewEntity> lists = scheduleListViewRepository.findAllByMemberId(member.getId());
+            List<ScheduleListViewEntity> lists = scheduleListViewRepository.findAllByMemberIdOrderByStartDateAsc(member.getId());
 
-            List<ScheduleListItem> scheduleListItems = lists.stream()
+            scheduleListItems = lists.stream()
                     .map(list -> new ScheduleListItem(
-                            list.getName()
+                            list.getId()
+                            ,list.getName()
                             ,list.getTitle()
                             ,list.getContent()
                             ,list.getStartDate()
@@ -76,11 +76,27 @@ public class ScheduleServiceImplement implements ScheduleService {
                             ,list.getRegDate()
 
                     )).toList();
-            return GetScheduleResponseDto.success(scheduleListItems);
+
         } catch (Exception e){
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
+        return GetScheduleResponseDto.success(scheduleListItems);
+    }
+
+    @Override
+    public ResponseEntity<? super DeleteScheduleResponseDto> deleteSchedule(Long id, String email) {
+        try {
+            if(email == null){
+                return ResponseDto.validationFailed();
+            }
+            scheduleRepository.deleteById(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return DeleteScheduleResponseDto.success();
     }
 
 }

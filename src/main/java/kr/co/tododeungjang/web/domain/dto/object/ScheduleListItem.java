@@ -12,12 +12,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ScheduleListItem {
     @NotBlank
+    private Long id;
+    @NotBlank
     private String name;
-
+    @NotBlank
     private String title;
     private String content;
+    @NotBlank
     private LocalDateTime startDate;
+    @NotBlank
     private LocalDateTime endDate;
     private String location;
+    @NotBlank
     private LocalDateTime regDate;
 }
