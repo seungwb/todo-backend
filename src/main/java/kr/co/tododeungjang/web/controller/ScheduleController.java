@@ -3,6 +3,7 @@ package kr.co.tododeungjang.web.controller;
 import jakarta.validation.Valid;
 import kr.co.tododeungjang.web.domain.dto.request.schedule.PostScheduleRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.schedule.UpdateScheduleRequestDto;
+import kr.co.tododeungjang.web.domain.dto.response.GetTodayScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.schedule.DeleteScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.schedule.GetScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.schedule.PostScheduleResponseDto;
@@ -13,6 +14,8 @@ import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.OffsetDateTime;
 
 @RestController
 @RequestMapping("/api/schedule")
@@ -26,6 +29,7 @@ public class ScheduleController {
             @Valid @RequestBody PostScheduleRequestDto requestBody,
             @AuthenticationPrincipal String email
             ){
+        System.out.println("requestBody.getStartDate() = " + requestBody.getStartDate());
         return scheduleService.saveSchedule(requestBody, email);
     }
 
@@ -52,5 +56,14 @@ public class ScheduleController {
     ){
 
         return scheduleService.updateSchedule(id, email, requestBody);
+    }
+
+    @GetMapping("today")
+    public ResponseEntity<? super GetTodayScheduleResponseDto> getTodaySchedule(
+            @RequestParam(name="today", required = false) String today
+            ,@AuthenticationPrincipal String email
+    ){
+
+        return scheduleService.getTodaySchedule(today, email);
     }
 }

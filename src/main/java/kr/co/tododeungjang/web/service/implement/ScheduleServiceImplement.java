@@ -3,6 +3,7 @@ package kr.co.tododeungjang.web.service.implement;
 import kr.co.tododeungjang.web.domain.dto.object.ScheduleListItem;
 import kr.co.tododeungjang.web.domain.dto.request.schedule.PostScheduleRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.schedule.UpdateScheduleRequestDto;
+import kr.co.tododeungjang.web.domain.dto.response.GetTodayScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.schedule.DeleteScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.schedule.GetScheduleResponseDto;
@@ -21,7 +22,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -34,9 +38,12 @@ public class ScheduleServiceImplement implements ScheduleService {
     @Override
     public ResponseEntity<? super PostScheduleResponseDto> saveSchedule(PostScheduleRequestDto dto, String email) {
         try {
+            if(email == null){
+                return ResponseDto.validationFailed();
+            }
             MemberEntity member = memberRepository.findByEmail(email);
             Long memberId = member.getId();
-            LocalDateTime regDate = LocalDateTime.now();
+            OffsetDateTime regDate = OffsetDateTime.now();
 
             ScheduleEntity scheduleEntity = ScheduleEntity.builder()
                     .title(dto.getTitle())
@@ -63,6 +70,9 @@ public class ScheduleServiceImplement implements ScheduleService {
     public ResponseEntity<? super GetScheduleResponseDto> getSchedule(String email) {
         List<ScheduleListItem> scheduleListItems;
         try {
+            if(email == null){
+                return ResponseDto.validationFailed();
+            }
             MemberEntity member = memberRepository.findByEmail(email);
 
             List<ScheduleListViewEntity> lists = scheduleListViewRepository.findAllByMemberIdOrderByStartDateAsc(member.getId());
@@ -119,6 +129,41 @@ public class ScheduleServiceImplement implements ScheduleService {
         }
 
         return UpdateScheduleResponseDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super GetTodayScheduleResponseDto> getTodaySchedule(String today, String email) {
+        List<ScheduleListItem> scheduleListItems;
+        try {
+            if(email == null){
+                return ResponseDto.validationFailed();
+            }
+            MemberEntity member = memberRepository.findByEmail(email);
+            OffsetDateTime dateTime = null;
+            LocalDate localDate = LocalDate.parse(today);
+            dateTime = localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
+
+            List<ScheduleListViewEntity> lists = scheduleListViewRepository.
+                    findScheduleByDate(member.getId(), dateTime);
+
+            scheduleListItems = lists.stream()
+                    .map(list -> new ScheduleListItem(
+                            list.getId()
+                            ,list.getName()
+                            ,list.getTitle()
+                            ,list.getContent()
+                            ,list.getStartDate()
+                            ,list.getEndDate()
+                            ,list.getLocation()
+                            ,list.getRegDate()
+
+                    )).toList();
+
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return GetTodayScheduleResponseDto.success(scheduleListItems);
     }
 
 }

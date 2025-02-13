@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -19,10 +20,10 @@ public class ScheduleListItem {
     private String title;
     private String content;
     @NotBlank
-    private LocalDateTime startDate;
+    private OffsetDateTime startDate;
     @NotBlank
-    private LocalDateTime endDate;
+    private OffsetDateTime endDate;
     private String location;
     @NotBlank
-    private LocalDateTime regDate;
+    private OffsetDateTime regDate;
 }

@@ -2,8 +2,10 @@ package kr.co.tododeungjang.web.provider;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -11,19 +13,22 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 
 @Component
 public class JwtProvider {
 
-    private SecretKey secretKey = Jwts.SIG.HS256.key().build();
+    @Value("${jwt.secret}")
+    private String secret;
+    public SecretKey secretKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
 
     //JWT 생성 메서드
     public String create(String email){
         Date expiredDate = Date.from(Instant.now().plus(1, ChronoUnit.HOURS)); //현재시간에서 1시간 추가
 
         String jwt = Jwts.builder()
-                .signWith(secretKey)        //암호화 알고리즘
+                .signWith(secretKey())        //암호화 알고리즘
                 .subject(email)             //사용자 식별자 값
                 .issuedAt(new Date())       //생성 시간
                 .expiration(expiredDate)    //만료 시간
@@ -34,7 +39,7 @@ public class JwtProvider {
     // expirationTime getter
     public int getExpirationTime(String token) {
         Claims claims = Jwts.parser()
-                .verifyWith(secretKey)
+                .verifyWith(secretKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -50,7 +55,7 @@ public class JwtProvider {
         Claims claims = null;
 
         try{
-            claims = Jwts.parser().verifyWith(secretKey)    //서명 검즘
+            claims = Jwts.parser().verifyWith(secretKey())    //서명 검즘
                     .build()                                //빌드
                     .parseSignedClaims(jwt)                 //JWT 파싱
                     .getPayload();                          //Claims 추출

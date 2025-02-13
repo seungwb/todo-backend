@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -28,11 +29,11 @@ public class ScheduleListViewEntity {
 
     private String location;
 
-    private LocalDateTime startDate;
+    private OffsetDateTime startDate;
 
-    private LocalDateTime endDate;
+    private OffsetDateTime endDate;
 
-    private LocalDateTime regDate;
+    private OffsetDateTime regDate;
 
     private Long memberId;
 }

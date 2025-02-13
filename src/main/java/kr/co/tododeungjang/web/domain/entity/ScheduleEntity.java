@@ -6,6 +6,7 @@ import kr.co.tododeungjang.web.domain.dto.request.schedule.UpdateScheduleRequest
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,15 +24,15 @@ public class ScheduleEntity {
     private String content;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime startDate;
+    private OffsetDateTime startDate;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime endDate;
+    private OffsetDateTime endDate;
 
     private String location;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime regDate;
+    private OffsetDateTime regDate;
 
     private Long memberId;
 
