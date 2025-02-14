@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import kr.co.tododeungjang.web.domain.dto.request.schedule.PostScheduleRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.schedule.UpdateScheduleRequestDto;
 import kr.co.tododeungjang.web.domain.dto.response.GetTodayScheduleResponseDto;
+import kr.co.tododeungjang.web.domain.dto.response.GetWeeklyScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.schedule.DeleteScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.schedule.GetScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.schedule.PostScheduleResponseDto;
@@ -58,12 +59,22 @@ public class ScheduleController {
         return scheduleService.updateSchedule(id, email, requestBody);
     }
 
-    @GetMapping("today")
+    @GetMapping("/today")
     public ResponseEntity<? super GetTodayScheduleResponseDto> getTodaySchedule(
             @RequestParam(name="today", required = false) String today
             ,@AuthenticationPrincipal String email
     ){
 
         return scheduleService.getTodaySchedule(today, email);
+    }
+
+    @GetMapping("/weekly")
+    public ResponseEntity<? super GetWeeklyScheduleResponseDto> getWeeklySchedule(
+            @RequestParam(name="start", required = false) String start
+            ,@RequestParam(name="end", required = false) String end
+            ,@AuthenticationPrincipal String email
+    ){
+
+        return scheduleService.getWeeklySchedule(start, end, email);
     }
 }

@@ -19,6 +19,16 @@ public interface ScheduleListViewRepository extends JpaRepository<ScheduleListVi
             "AND slv.end_date::DATE >= :today " +
             "ORDER BY slv.start_date",
             nativeQuery = true)
-    List<ScheduleListViewEntity> findScheduleByDate(@Param("memberId") Long memberId,
+    List<ScheduleListViewEntity> findTodayScheduleByDate(@Param("memberId") Long memberId,
                                                     @Param("today") OffsetDateTime today);
+
+    @Query(value = "SELECT * FROM schedule_list_view slv " +
+            "WHERE slv.member_id = :memberId " +
+            "AND slv.start_date::DATE <= :end " +
+            "AND slv.end_date::DATE >= :start " +
+            "ORDER BY slv.start_date",
+            nativeQuery = true)
+    List<ScheduleListViewEntity> findWeeklyScheduleByDate(@Param("memberId") Long memberId,
+                                                          @Param("start") OffsetDateTime startDateTime
+                                                            ,@Param("end") OffsetDateTime endDateTime);
 }

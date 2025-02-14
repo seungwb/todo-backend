@@ -4,6 +4,7 @@ import kr.co.tododeungjang.web.domain.dto.object.ScheduleListItem;
 import kr.co.tododeungjang.web.domain.dto.request.schedule.PostScheduleRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.schedule.UpdateScheduleRequestDto;
 import kr.co.tododeungjang.web.domain.dto.response.GetTodayScheduleResponseDto;
+import kr.co.tododeungjang.web.domain.dto.response.GetWeeklyScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.schedule.DeleteScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.schedule.GetScheduleResponseDto;
@@ -133,7 +134,7 @@ public class ScheduleServiceImplement implements ScheduleService {
 
     @Override
     public ResponseEntity<? super GetTodayScheduleResponseDto> getTodaySchedule(String today, String email) {
-        List<ScheduleListItem> scheduleListItems;
+        List<ScheduleListItem> todayScheduleListItems;
         try {
             if(email == null){
                 return ResponseDto.validationFailed();
@@ -144,9 +145,9 @@ public class ScheduleServiceImplement implements ScheduleService {
             dateTime = localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
 
             List<ScheduleListViewEntity> lists = scheduleListViewRepository.
-                    findScheduleByDate(member.getId(), dateTime);
+                    findTodayScheduleByDate(member.getId(), dateTime);
 
-            scheduleListItems = lists.stream()
+            todayScheduleListItems = lists.stream()
                     .map(list -> new ScheduleListItem(
                             list.getId()
                             ,list.getName()
@@ -163,7 +164,46 @@ public class ScheduleServiceImplement implements ScheduleService {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
-        return GetTodayScheduleResponseDto.success(scheduleListItems);
+        return GetTodayScheduleResponseDto.success(todayScheduleListItems);
+    }
+
+    @Override
+    public ResponseEntity<? super GetWeeklyScheduleResponseDto> getWeeklySchedule(String start, String end, String email) {
+        List<ScheduleListItem> weeklyScheduleListItems;
+        try {
+            if(email == null){
+                return ResponseDto.validationFailed();
+            }
+            MemberEntity member = memberRepository.findByEmail(email);
+            OffsetDateTime startDateTime = null;
+            OffsetDateTime endDateTime = null;
+            LocalDate localDate = LocalDate.parse(start);
+            startDateTime = localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
+            localDate = LocalDate.parse(end);
+            endDateTime = localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
+
+            List<ScheduleListViewEntity> lists = scheduleListViewRepository
+                    .findWeeklyScheduleByDate(member.getId(), startDateTime, endDateTime);
+
+            weeklyScheduleListItems = lists.stream()
+                    .map(list -> new ScheduleListItem(
+                            list.getId()
+                            ,list.getName()
+                            ,list.getTitle()
+                            ,list.getContent()
+                            ,list.getStartDate()
+                            ,list.getEndDate()
+                            ,list.getLocation()
+                            ,list.getRegDate()
+
+                    )).toList();
+
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return GetWeeklyScheduleResponseDto.success(weeklyScheduleListItems);
     }
 
 }

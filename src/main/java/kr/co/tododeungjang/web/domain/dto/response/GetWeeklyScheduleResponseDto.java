@@ -10,16 +10,16 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 @Getter
-public class GetTodayScheduleResponseDto extends ResponseDto {
+public class GetWeeklyScheduleResponseDto extends ResponseDto {
 
-    private final List<ScheduleListItem> todayScheduleListItems;
-    public GetTodayScheduleResponseDto(List<ScheduleListItem> todayScheduleListItems) {
+    private final List<ScheduleListItem> weeklyScheduleListItems;
+    public GetWeeklyScheduleResponseDto(List<ScheduleListItem> weeklyScheduleListItems) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
-        this.todayScheduleListItems = todayScheduleListItems;
+        this.weeklyScheduleListItems = weeklyScheduleListItems;
     }
 
-    public static ResponseEntity<GetTodayScheduleResponseDto> success (List<ScheduleListItem> todayScheduleListItems){
-        GetTodayScheduleResponseDto result = new GetTodayScheduleResponseDto(todayScheduleListItems);
+    public static ResponseEntity<GetWeeklyScheduleResponseDto> success (List<ScheduleListItem> weeklyScheduleListItems){
+        GetWeeklyScheduleResponseDto result = new GetWeeklyScheduleResponseDto(weeklyScheduleListItems);
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
