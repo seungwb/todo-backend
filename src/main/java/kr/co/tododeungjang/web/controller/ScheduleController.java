@@ -30,7 +30,6 @@ public class ScheduleController {
             @Valid @RequestBody PostScheduleRequestDto requestBody,
             @AuthenticationPrincipal String email
             ){
-        System.out.println("requestBody.getStartDate() = " + requestBody.getStartDate());
         return scheduleService.saveSchedule(requestBody, email);
     }
 
