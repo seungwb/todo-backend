@@ -1,7 +1,9 @@
 package kr.co.tododeungjang.web.service.implement;
 
+import kr.co.tododeungjang.web.domain.dto.object.TodoListItem;
 import kr.co.tododeungjang.web.domain.dto.request.todo.PostTodoRequestDto;
 import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
+import kr.co.tododeungjang.web.domain.dto.response.todo.GetTodoResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.todo.PostTodoResponseDto;
 import kr.co.tododeungjang.web.domain.entity.MemberEntity;
 import kr.co.tododeungjang.web.domain.entity.TodoEntity;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -45,5 +48,29 @@ public class TodoServiceImplement implements TodoService {
         }
 
         return PostTodoResponseDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super GetTodoResponseDto> getTodo(String email) {
+        List<TodoListItem> todoListItems;
+        try{
+            if(email == null) return ResponseDto.validationFailed();
+
+            MemberEntity member = memberRepository.findByEmail(email);
+            List<TodoEntity> lists = todoRepository.findByMemberId(member.getId());
+            todoListItems = lists.stream().map(
+                    list-> new TodoListItem(
+                            list.getId()
+                            ,list.getTitle()
+                            ,list.getContent()
+                            ,list.getRegDate()
+                            ,list.getState()
+                    )
+            ).toList();
+
+        } catch (Exception e){
+            return ResponseDto.databaseError();
+        }
+        return GetTodoResponseDto.success(todoListItems);
     }
 }

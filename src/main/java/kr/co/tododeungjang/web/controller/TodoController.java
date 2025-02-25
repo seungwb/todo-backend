@@ -2,15 +2,13 @@ package kr.co.tododeungjang.web.controller;
 
 import jakarta.validation.Valid;
 import kr.co.tododeungjang.web.domain.dto.request.todo.PostTodoRequestDto;
+import kr.co.tododeungjang.web.domain.dto.response.todo.GetTodoResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.todo.PostTodoResponseDto;
 import kr.co.tododeungjang.web.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/todo")
@@ -27,5 +25,12 @@ public class TodoController {
 
 
         return todoService.saveTodo(requestBody, email);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<? super GetTodoResponseDto> getTodo(
+            @AuthenticationPrincipal String email
+    ){
+        return todoService.getTodo(email);
     }
 }
