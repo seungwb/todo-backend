@@ -5,10 +5,7 @@ import kr.co.tododeungjang.web.domain.dto.request.todo.PostTodoRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.todo.UpdateStateTodoRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.todo.UpdateTodoRequestDto;
 import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
-import kr.co.tododeungjang.web.domain.dto.response.todo.GetTodoResponseDto;
-import kr.co.tododeungjang.web.domain.dto.response.todo.PostTodoResponseDto;
-import kr.co.tododeungjang.web.domain.dto.response.todo.UpdateStateTodoResponseDto;
-import kr.co.tododeungjang.web.domain.dto.response.todo.UpdateTodoResponseDto;
+import kr.co.tododeungjang.web.domain.dto.response.todo.*;
 import kr.co.tododeungjang.web.domain.entity.MemberEntity;
 import kr.co.tododeungjang.web.domain.entity.TodoEntity;
 import kr.co.tododeungjang.web.repository.MemberRepository;
@@ -107,5 +104,17 @@ public class TodoServiceImplement implements TodoService {
             return ResponseDto.databaseError();
         }
         return UpdateTodoResponseDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super DeleteTodoResponseDto> delete(Long id, String email) {
+        try {
+            if(email == null) return ResponseDto.validationFailed();
+            todoRepository.deleteById(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return DeleteTodoResponseDto.success();
     }
 }

@@ -4,10 +4,7 @@ import jakarta.validation.Valid;
 import kr.co.tododeungjang.web.domain.dto.request.todo.PostTodoRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.todo.UpdateStateTodoRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.todo.UpdateTodoRequestDto;
-import kr.co.tododeungjang.web.domain.dto.response.todo.GetTodoResponseDto;
-import kr.co.tododeungjang.web.domain.dto.response.todo.PostTodoResponseDto;
-import kr.co.tododeungjang.web.domain.dto.response.todo.UpdateStateTodoResponseDto;
-import kr.co.tododeungjang.web.domain.dto.response.todo.UpdateTodoResponseDto;
+import kr.co.tododeungjang.web.domain.dto.response.todo.*;
 import kr.co.tododeungjang.web.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -56,5 +53,14 @@ public class TodoController {
             ){
 
         return todoService.update(id, requestBody, email);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<? super DeleteTodoResponseDto> delete(
+        @PathVariable("id") Long id
+        , @AuthenticationPrincipal String email
+    ){
+
+        return todoService.delete(id, email);
     }
 }
