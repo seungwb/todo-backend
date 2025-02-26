@@ -2,8 +2,12 @@ package kr.co.tododeungjang.web.controller;
 
 import jakarta.validation.Valid;
 import kr.co.tododeungjang.web.domain.dto.request.todo.PostTodoRequestDto;
+import kr.co.tododeungjang.web.domain.dto.request.todo.UpdateStateTodoRequestDto;
+import kr.co.tododeungjang.web.domain.dto.request.todo.UpdateTodoRequestDto;
 import kr.co.tododeungjang.web.domain.dto.response.todo.GetTodoResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.todo.PostTodoResponseDto;
+import kr.co.tododeungjang.web.domain.dto.response.todo.UpdateStateTodoResponseDto;
+import kr.co.tododeungjang.web.domain.dto.response.todo.UpdateTodoResponseDto;
 import kr.co.tododeungjang.web.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,5 +36,25 @@ public class TodoController {
             @AuthenticationPrincipal String email
     ){
         return todoService.getTodo(email);
+    }
+
+    @PutMapping("/toggle/{id}")
+    public ResponseEntity<? super UpdateStateTodoResponseDto> updateState(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody UpdateStateTodoRequestDto requestBody,
+            @AuthenticationPrincipal String email
+    ){
+
+        return todoService.updateState(id, requestBody, email);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<? super UpdateTodoResponseDto> update(
+            @PathVariable("id") Long id
+            , @Valid @RequestBody UpdateTodoRequestDto requestBody
+            , @AuthenticationPrincipal String email
+            ){
+
+        return todoService.update(id, requestBody, email);
     }
 }

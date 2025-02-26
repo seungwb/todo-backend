@@ -1,6 +1,8 @@
 package kr.co.tododeungjang.web.domain.entity;
 
 import jakarta.persistence.*;
+import kr.co.tododeungjang.web.domain.dto.request.todo.UpdateStateTodoRequestDto;
+import kr.co.tododeungjang.web.domain.dto.request.todo.UpdateTodoRequestDto;
 import lombok.*;
 
 import java.time.OffsetDateTime;
@@ -26,4 +28,13 @@ public class TodoEntity {
     private Boolean state;
 
     private Long memberId;
+
+    public void updateState(UpdateStateTodoRequestDto requestBody) {
+        this.state = requestBody.getState();
+    }
+
+    public void update(UpdateTodoRequestDto requestBody) {
+        this.title = requestBody.getTitle();
+        this.content = requestBody.getContent();
+    }
 }
