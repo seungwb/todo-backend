@@ -6,8 +6,10 @@ import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.auth.SignInResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.auth.SignUpResponseDto;
 import kr.co.tododeungjang.web.domain.entity.MemberEntity;
+import kr.co.tododeungjang.web.domain.entity.MemberRole;
 import kr.co.tododeungjang.web.provider.JwtProvider;
 import kr.co.tododeungjang.web.repository.MemberRepository;
+import kr.co.tododeungjang.web.repository.MemberRoleRepository;
 import kr.co.tododeungjang.web.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +26,13 @@ public class AuthServiceImplement implements AuthService {
 
     private final MemberRepository memberRepository;
 
+    private final MemberRoleRepository memberRoleRepository;
+
     private final JwtProvider jwtProvider;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Override
     public ResponseEntity<? super SignUpResponseDto> signUp(SignUpRequestDto dto) {
-
-
         try {
             String name = dto.getName();
             String email = dto.getEmail();
@@ -58,8 +60,14 @@ public class AuthServiceImplement implements AuthService {
                     .joinDate(joinDate)
                     .build();
 
-            memberRepository.save(memberEntity);
+            MemberEntity saveMember = memberRepository.save(memberEntity);
 
+            MemberRole role = MemberRole.builder()
+                    .roleName("ROLE_MEMBER")
+                    .memberId(saveMember.getId())
+                    .build();
+
+            memberRoleRepository.save(role);
 
         }catch (Exception e){
             e.printStackTrace();
