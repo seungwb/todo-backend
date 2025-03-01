@@ -25,4 +25,10 @@ public class GetTodoResponseDto extends ResponseDto {
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+    public static ResponseEntity<ResponseDto> notExistedUser(){
+        ResponseDto reslut = new ResponseDto(ResponseCode.NOT_EXISTED_USER, ResponseMessage.NOT_EXISTED_USER);
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(reslut);
+    }
+
 }

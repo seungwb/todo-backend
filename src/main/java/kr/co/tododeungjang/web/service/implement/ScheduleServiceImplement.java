@@ -17,17 +17,16 @@ import kr.co.tododeungjang.web.repository.ScheduleListViewRepository;
 import kr.co.tododeungjang.web.repository.ScheduleRepository;
 import kr.co.tododeungjang.web.repository.MemberRepository;
 import kr.co.tododeungjang.web.service.ScheduleService;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +42,9 @@ public class ScheduleServiceImplement implements ScheduleService {
                 return ResponseDto.validationFailed();
             }
             MemberEntity member = memberRepository.findByEmail(email);
+            if(member == null){
+                return PostScheduleResponseDto.notExistedUser();
+            }
             Long memberId = member.getId();
             OffsetDateTime regDate = OffsetDateTime.now();
 
@@ -104,6 +106,17 @@ public class ScheduleServiceImplement implements ScheduleService {
             if(email == null){
                 return ResponseDto.validationFailed();
             }
+            MemberEntity member = memberRepository.findByEmail(email);
+
+            if(member == null){
+                return DeleteScheduleResponseDto.notExistedUser();
+            }
+
+            Optional<ScheduleEntity> optionalSchedule = scheduleRepository.findById(id);
+            if (optionalSchedule.isEmpty()) {
+                return DeleteScheduleResponseDto.notExistedSchedule();
+            }
+
             scheduleRepository.deleteById(id);
         }catch (Exception e){
             e.printStackTrace();
@@ -121,7 +134,18 @@ public class ScheduleServiceImplement implements ScheduleService {
             if(email == null){
                 return ResponseDto.validationFailed();
             }
-            ScheduleEntity schedule = scheduleRepository.findById(id).orElseThrow();
+            MemberEntity member = memberRepository.findByEmail(email);
+
+            if(member == null){
+                return UpdateScheduleResponseDto.notExistedUser();
+            }
+
+            Optional<ScheduleEntity> optionalSchedule = scheduleRepository.findById(id);
+            if (optionalSchedule.isEmpty()) {
+                return UpdateScheduleResponseDto.notExistedSchedule();
+            }
+
+            ScheduleEntity schedule = optionalSchedule.get();
             schedule.update(requestBody);
 
         }catch (Exception e){
@@ -140,7 +164,7 @@ public class ScheduleServiceImplement implements ScheduleService {
                 return ResponseDto.validationFailed();
             }
             MemberEntity member = memberRepository.findByEmail(email);
-            OffsetDateTime dateTime = null;
+            OffsetDateTime dateTime;
             LocalDate localDate = LocalDate.parse(today);
             dateTime = localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
 
@@ -175,8 +199,8 @@ public class ScheduleServiceImplement implements ScheduleService {
                 return ResponseDto.validationFailed();
             }
             MemberEntity member = memberRepository.findByEmail(email);
-            OffsetDateTime startDateTime = null;
-            OffsetDateTime endDateTime = null;
+            OffsetDateTime startDateTime;
+            OffsetDateTime endDateTime;
             LocalDate localDate = LocalDate.parse(start);
             startDateTime = localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
             localDate = LocalDate.parse(end);

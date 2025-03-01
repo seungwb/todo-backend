@@ -24,8 +24,8 @@ public class UpdateScheduleResponseDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(reslut);
     }
 
-    public static ResponseEntity<ResponseDto> authorizationFail(){
-        ResponseDto reslut = new ResponseDto(ResponseCode.AUTHORIZATION_FAIL, ResponseMessage.AUTHORIZATION_FAIL);
+    public static ResponseEntity<ResponseDto> notExistedSchedule(){
+        ResponseDto reslut = new ResponseDto(ResponseCode.NOT_EXISTED_SCHEDULE, ResponseMessage.NOT_EXISTED_SCHEDULE);
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(reslut);
     }

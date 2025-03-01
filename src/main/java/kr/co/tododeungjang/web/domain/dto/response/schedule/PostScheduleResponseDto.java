@@ -23,10 +23,4 @@ public class PostScheduleResponseDto extends ResponseDto {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(reslut);
     }
-
-    public static ResponseEntity<ResponseDto> authorizationFail(){
-        ResponseDto reslut = new ResponseDto(ResponseCode.AUTHORIZATION_FAIL, ResponseMessage.AUTHORIZATION_FAIL);
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(reslut);
-    }
 }
