@@ -5,7 +5,7 @@ FROM openjdk:17
 WORKDIR /app
 
 # 3. 필수 유틸리티 (`xargs` 포함) 설치
-RUN yum update -y && yum install -y findutils
+RUN microdnf update -y && microdnf install -y findutils
 
 # 4. 소스 코드 전체 복사
 COPY . .
@@ -18,3 +18,4 @@ RUN ./gradlew bootJar
 
 # 7. JAR 파일 실행
 CMD ["java", "-jar", "build/libs/web-0.0.1-SNAPSHOT.jar"]
+
