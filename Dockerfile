@@ -1,11 +1,11 @@
-# 1. OpenJDK 17을 기반 이미지 사용
+# 1. OpenJDK 17 (Oracle Linux 기반)
 FROM openjdk:17
 
 # 2. 작업 디렉토리 설정
 WORKDIR /app
 
-# 3. 필수 유틸리티 설치 (`xargs` 포함)
-RUN apt-get update && apt-get install -y xargs
+# 3. 필수 유틸리티 (`xargs` 포함) 설치
+RUN yum update -y && yum install -y findutils
 
 # 4. 소스 코드 전체 복사
 COPY . .
