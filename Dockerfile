@@ -7,8 +7,10 @@ WORKDIR /app
 # 3. 필수 유틸리티 (`xargs` 포함) 설치
 RUN microdnf update -y && microdnf install -y findutils
 
-# 4. 소스 코드 전체 복사
-COPY . .
+
+COPY build/libs/web-0.0.1-SNAPSHOT.jar app.jar
+
+EXPOSE 4000
 
 # 5. Gradle 실행 권한 부여
 RUN chmod +x gradlew
