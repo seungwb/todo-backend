@@ -1,0 +1,6 @@
+# Gradle 캐시, 빌드 폴더 제외
+.gradle
+target
+*.iml
+.idea
+*.md

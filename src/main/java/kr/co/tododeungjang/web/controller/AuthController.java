@@ -1,6 +1,5 @@
 package kr.co.tododeungjang.web.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import kr.co.tododeungjang.web.domain.dto.request.auth.SignInRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.auth.SignUpRequestDto;
