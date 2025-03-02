@@ -7,8 +7,11 @@ WORKDIR /app
 # 3. 소스 코드 전체 복사
 COPY . .
 
-# 4. Gradle 빌드 실행 (Render에서 JAR 생성)
+# 4. Gradle 실행 권한 부여
+RUN chmod +x gradlew || echo "Skipping chmod on Windows"
+
+# 5. Gradle 빌드 실행 (JAR 생성)
 RUN ./gradlew bootJar
 
-# 5. JAR 파일 실행
+# 6. JAR 파일 실행
 CMD ["java", "-jar", "build/libs/web-0.0.1-SNAPSHOT.jar"]
