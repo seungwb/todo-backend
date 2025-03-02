@@ -5,7 +5,7 @@ FROM openjdk:17
 WORKDIR /app
 
 # 3. 필수 유틸리티 (`xargs` 포함) 설치
-RUN microdnf update -y && microdnf install -y findutils
+RUN microdnf install -y findutils
 
 
 COPY . .
