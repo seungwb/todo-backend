@@ -1,8 +1,10 @@
 package kr.co.tododeungjang.web.service.implement;
 
+import kr.co.tododeungjang.web.domain.dto.request.auth.FindIdRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.auth.SignInRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.auth.SignUpRequestDto;
 import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
+import kr.co.tododeungjang.web.domain.dto.response.auth.FindIdResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.auth.SignInResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.auth.SignUpResponseDto;
 import kr.co.tododeungjang.web.domain.entity.MemberEntity;
@@ -103,5 +105,22 @@ public class AuthServiceImplement implements AuthService {
         }
 
         return SignInResponseDto.success(token, expirationTime);
+    }
+
+    @Override
+    public ResponseEntity<? super FindIdResponseDto> findId(FindIdRequestDto dto) {
+        String email;
+        try {
+            String name = dto.getName();
+            String phone = dto.getPhone();
+            MemberEntity memberEntity =  memberRepository.findByNameAndPhone(name, phone);
+            if(memberEntity == null) return FindIdResponseDto.findIdFail();
+            email = memberEntity.getEmail();
+
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return FindIdResponseDto.success(email);
     }
 }

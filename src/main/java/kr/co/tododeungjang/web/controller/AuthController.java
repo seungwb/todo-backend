@@ -1,8 +1,10 @@
 package kr.co.tododeungjang.web.controller;
 
 import jakarta.validation.Valid;
+import kr.co.tododeungjang.web.domain.dto.request.auth.FindIdRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.auth.SignInRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.auth.SignUpRequestDto;
+import kr.co.tododeungjang.web.domain.dto.response.auth.FindIdResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.auth.SignInResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.auth.SignUpResponseDto;
 import kr.co.tododeungjang.web.service.AuthService;
@@ -30,5 +32,12 @@ public class AuthController {
     public ResponseEntity<? super SignInResponseDto> signIn(
             @RequestBody @Valid SignInRequestDto requestBody){
         return authService.signIn(requestBody);
+    }
+
+    @PostMapping("/find-id")
+    public ResponseEntity<? super FindIdResponseDto> findId(
+            @RequestBody @Valid FindIdRequestDto requestBody
+            ){
+        return authService.findId(requestBody);
     }
 }

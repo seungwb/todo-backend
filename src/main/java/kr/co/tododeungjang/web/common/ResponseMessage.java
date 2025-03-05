@@ -15,6 +15,9 @@ public interface ResponseMessage {
     //HTTP Status 401
     String SIGN_IN_FAIL = "Login information mismatch.";
 
+    //HTTP Status 404
+    String FIND_ID_FAIL = "User not found.";
+
     //HTTP Status 500
     String DATABASE_ERROR = "Database error.";
 }
