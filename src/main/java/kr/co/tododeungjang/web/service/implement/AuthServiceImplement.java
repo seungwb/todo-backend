@@ -14,7 +14,6 @@ import kr.co.tododeungjang.web.repository.MemberRepository;
 import kr.co.tododeungjang.web.repository.MemberRoleRepository;
 import kr.co.tododeungjang.web.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

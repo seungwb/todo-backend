@@ -12,6 +12,7 @@ public interface ResponseCode {
     String NOT_EXISTED_USER = "NU";
     String NOT_EXISTED_SCHEDULE = "NS";
     String NOT_EXISTED_TODO = "NT";
+    String NOT_MATCH_NUMBER = "NN";
 
     //HTTP Status 401
     String SIGN_IN_FAIL = "SF";

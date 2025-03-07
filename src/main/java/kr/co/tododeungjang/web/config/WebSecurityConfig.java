@@ -39,6 +39,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/api/auth/**", "/api/schedule/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/schedule","/api/schedule/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/mail/**").permitAll()
                 .anyRequest().authenticated()
                 ).exceptionHandling(handler -> handler.authenticationEntryPoint(new FailedAuthenticationEntryPoint()));
 
