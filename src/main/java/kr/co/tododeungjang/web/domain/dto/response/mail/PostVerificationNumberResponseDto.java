@@ -3,9 +3,11 @@ package kr.co.tododeungjang.web.domain.dto.response.mail;
 import kr.co.tododeungjang.web.common.ResponseCode;
 import kr.co.tododeungjang.web.common.ResponseMessage;
 import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+@Getter
 public class PostVerificationNumberResponseDto extends ResponseDto {
     public PostVerificationNumberResponseDto() {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
