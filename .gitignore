@@ -7,7 +7,7 @@ build/
 
 application.properties
 application-dev.properties
-
+src/main/resources/http-requests
 
 ### STS ###
 .apt_generated

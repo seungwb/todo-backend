@@ -2,6 +2,8 @@ package kr.co.tododeungjang.web.service.implement;
 
 import jakarta.annotation.Resource;
 import jakarta.mail.internet.MimeMessage;
+import kr.co.tododeungjang.web.domain.dto.request.mail.FindPasswordRequestDto;
+import kr.co.tododeungjang.web.domain.dto.request.mail.VerifiedNumberRequestDto;
 import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.mail.PostSendMailResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.mail.PostVerificationNumberResponseDto;
@@ -28,8 +30,9 @@ public class MailServiceImplement {
     @Value("${spring.mail.username}")
     private String fromMail;
 
-    public ResponseEntity<? super PostSendMailResponseDto> sendMail(String toMail){
+    public ResponseEntity<? super PostSendMailResponseDto> sendMail(FindPasswordRequestDto requestBody){
         try {
+            String toMail = requestBody.getEmail();
             MemberEntity member = memberRepository.findByEmail(toMail);
             if (member == null) return PostSendMailResponseDto.notExistedUser();
             Random random = new Random();
@@ -53,8 +56,9 @@ public class MailServiceImplement {
         return PostSendMailResponseDto.success();
     }
 
-    public ResponseEntity<? super PostVerificationNumberResponseDto> verificationNumber(String number){
+    public ResponseEntity<? super PostVerificationNumberResponseDto> verificationNumber(VerifiedNumberRequestDto requestBody){
         try {
+            String number = requestBody.getNumber();
             if(!number.equals(verificationNumber)) return PostVerificationNumberResponseDto.notMatchNumber();
         }catch (Exception e){
             e.printStackTrace();
