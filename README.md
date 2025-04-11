@@ -69,4 +69,4 @@ backend/
   - 할 일 상태 수정 (PUT /api/todo/toggle/{id})
   - 할 일 삭제 (DELETE /api/todo/{id})
 
-- [API 명세서 참조](https://github.com/seungwb/Obsidian/blob/main/%EA%B0%9C%EC%9D%B8%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%ED%88%AC%EB%91%90%EB%93%B1%EC%9E%A5%20(%EC%9D%BC%EC%A0%95%EA%B4%80%EB%A6%AC)/REST%20API%20%EB%AA%85%EC%84%B8%EC%84%9C.md) 
+- [API 명세서 참조](https://seungwb.github.io/%EA%B0%9C%EC%9D%B8-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8/%ED%88%AC%EB%91%90%EB%93%B1%EC%9E%A5/REST-API-%EB%AA%85%EC%84%B8%EC%84%9C) 
