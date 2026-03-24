@@ -3,19 +3,14 @@ package kr.co.tododeungjang.web.service.implement;
 import kr.co.tododeungjang.web.domain.dto.object.ScheduleListItem;
 import kr.co.tododeungjang.web.domain.dto.request.schedule.PostScheduleRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.schedule.UpdateScheduleRequestDto;
-import kr.co.tododeungjang.web.domain.dto.response.GetTodayScheduleResponseDto;
-import kr.co.tododeungjang.web.domain.dto.response.GetWeeklyScheduleResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
-import kr.co.tododeungjang.web.domain.dto.response.schedule.DeleteScheduleResponseDto;
-import kr.co.tododeungjang.web.domain.dto.response.schedule.GetScheduleResponseDto;
-import kr.co.tododeungjang.web.domain.dto.response.schedule.PostScheduleResponseDto;
-import kr.co.tododeungjang.web.domain.dto.response.schedule.UpdateScheduleResponseDto;
-import kr.co.tododeungjang.web.domain.entity.ScheduleEntity;
+import kr.co.tododeungjang.web.domain.dto.response.schedule.*;
 import kr.co.tododeungjang.web.domain.entity.MemberEntity;
+import kr.co.tododeungjang.web.domain.entity.ScheduleEntity;
 import kr.co.tododeungjang.web.domain.entity.ScheduleListViewEntity;
+import kr.co.tododeungjang.web.repository.MemberRepository;
 import kr.co.tododeungjang.web.repository.ScheduleListViewRepository;
 import kr.co.tododeungjang.web.repository.ScheduleRepository;
-import kr.co.tododeungjang.web.repository.MemberRepository;
 import kr.co.tododeungjang.web.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,18 +30,31 @@ public class ScheduleServiceImplement implements ScheduleService {
     private final MemberRepository memberRepository;
     private final ScheduleRepository scheduleRepository;
     private final ScheduleListViewRepository scheduleListViewRepository;
+
+    private MemberEntity findMemberByEmail(String email) {
+        if (email == null) return null;
+        return memberRepository.findByEmail(email);
+    }
+
+    private List<ScheduleListItem> toScheduleListItems(List<ScheduleListViewEntity> lists) {
+        return lists.stream().map(list -> new ScheduleListItem(
+                list.getId(),
+                list.getName(),
+                list.getTitle(),
+                list.getContent(),
+                list.getStartDate(),
+                list.getEndDate(),
+                list.getLocation(),
+                list.getRegDate()
+        )).toList();
+    }
+
     @Override
     public ResponseEntity<? super PostScheduleResponseDto> saveSchedule(PostScheduleRequestDto dto, String email) {
         try {
-            if(email == null){
-                return ResponseDto.validationFailed();
-            }
-            MemberEntity member = memberRepository.findByEmail(email);
-            if(member == null){
-                return PostScheduleResponseDto.notExistedUser();
-            }
-            Long memberId = member.getId();
-            OffsetDateTime regDate = OffsetDateTime.now();
+            if (email == null) return ResponseDto.validationFailed();
+            MemberEntity member = findMemberByEmail(email);
+            if (member == null) return ResponseDto.notExistedUser();
 
             ScheduleEntity scheduleEntity = ScheduleEntity.builder()
                     .title(dto.getTitle())
@@ -54,17 +62,15 @@ public class ScheduleServiceImplement implements ScheduleService {
                     .location(dto.getLocation())
                     .startDate(dto.getStartDate())
                     .endDate(dto.getEndDate())
-                    .memberId(memberId)
-                    .regDate(regDate)
+                    .memberId(member.getId())
+                    .regDate(OffsetDateTime.now())
                     .build();
 
             scheduleRepository.save(scheduleEntity);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
-
-
 
         return PostScheduleResponseDto.success();
     }
@@ -73,27 +79,15 @@ public class ScheduleServiceImplement implements ScheduleService {
     public ResponseEntity<? super GetScheduleResponseDto> getSchedule(String email) {
         List<ScheduleListItem> scheduleListItems;
         try {
-            if(email == null){
-                return ResponseDto.validationFailed();
-            }
-            MemberEntity member = memberRepository.findByEmail(email);
+            if (email == null) return ResponseDto.validationFailed();
+            MemberEntity member = findMemberByEmail(email);
+            if (member == null) return ResponseDto.notExistedUser();
 
-            List<ScheduleListViewEntity> lists = scheduleListViewRepository.findAllByMemberIdOrderByStartDateAsc(member.getId());
+            List<ScheduleListViewEntity> lists = scheduleListViewRepository
+                    .findAllByMemberIdOrderByStartDateAsc(member.getId());
+            scheduleListItems = toScheduleListItems(lists);
 
-            scheduleListItems = lists.stream()
-                    .map(list -> new ScheduleListItem(
-                            list.getId()
-                            ,list.getName()
-                            ,list.getTitle()
-                            ,list.getContent()
-                            ,list.getStartDate()
-                            ,list.getEndDate()
-                            ,list.getLocation()
-                            ,list.getRegDate()
-
-                    )).toList();
-
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
@@ -103,22 +97,15 @@ public class ScheduleServiceImplement implements ScheduleService {
     @Override
     public ResponseEntity<? super DeleteScheduleResponseDto> deleteSchedule(Long id, String email) {
         try {
-            if(email == null){
-                return ResponseDto.validationFailed();
-            }
-            MemberEntity member = memberRepository.findByEmail(email);
-
-            if(member == null){
-                return DeleteScheduleResponseDto.notExistedUser();
-            }
+            if (email == null) return ResponseDto.validationFailed();
+            MemberEntity member = findMemberByEmail(email);
+            if (member == null) return ResponseDto.notExistedUser();
 
             Optional<ScheduleEntity> optionalSchedule = scheduleRepository.findById(id);
-            if (optionalSchedule.isEmpty()) {
-                return DeleteScheduleResponseDto.notExistedSchedule();
-            }
+            if (optionalSchedule.isEmpty()) return ResponseDto.notExistedSchedule();
 
             scheduleRepository.deleteById(id);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
@@ -129,26 +116,23 @@ public class ScheduleServiceImplement implements ScheduleService {
     @Override
     @Transactional
     public ResponseEntity<? super UpdateScheduleResponseDto> updateSchedule(Long id, String email, UpdateScheduleRequestDto requestBody) {
-
-        try{
-            if(email == null){
-                return ResponseDto.validationFailed();
-            }
-            MemberEntity member = memberRepository.findByEmail(email);
-
-            if(member == null){
-                return UpdateScheduleResponseDto.notExistedUser();
-            }
+        try {
+            if (email == null) return ResponseDto.validationFailed();
+            MemberEntity member = findMemberByEmail(email);
+            if (member == null) return ResponseDto.notExistedUser();
 
             Optional<ScheduleEntity> optionalSchedule = scheduleRepository.findById(id);
-            if (optionalSchedule.isEmpty()) {
-                return UpdateScheduleResponseDto.notExistedSchedule();
-            }
+            if (optionalSchedule.isEmpty()) return ResponseDto.notExistedSchedule();
 
             ScheduleEntity schedule = optionalSchedule.get();
-            schedule.update(requestBody);
-
-        }catch (Exception e){
+            schedule.update(
+                    requestBody.getTitle(),
+                    requestBody.getContent(),
+                    requestBody.getLocation(),
+                    requestBody.getStartDate(),
+                    requestBody.getEndDate()
+            );
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
@@ -160,31 +144,20 @@ public class ScheduleServiceImplement implements ScheduleService {
     public ResponseEntity<? super GetTodayScheduleResponseDto> getTodaySchedule(String today, String email) {
         List<ScheduleListItem> todayScheduleListItems;
         try {
-            if(email == null){
-                return ResponseDto.validationFailed();
-            }
-            MemberEntity member = memberRepository.findByEmail(email);
-            OffsetDateTime dateTime;
+            if (email == null) return ResponseDto.validationFailed();
+            if (today == null) return ResponseDto.validationFailed();
+
+            MemberEntity member = findMemberByEmail(email);
+            if (member == null) return ResponseDto.notExistedUser();
+
             LocalDate localDate = LocalDate.parse(today);
-            dateTime = localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
+            OffsetDateTime dateTime = localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
 
-            List<ScheduleListViewEntity> lists = scheduleListViewRepository.
-                    findTodayScheduleByDate(member.getId(), dateTime);
+            List<ScheduleListViewEntity> lists = scheduleListViewRepository
+                    .findTodayScheduleByDate(member.getId(), dateTime);
+            todayScheduleListItems = toScheduleListItems(lists);
 
-            todayScheduleListItems = lists.stream()
-                    .map(list -> new ScheduleListItem(
-                            list.getId()
-                            ,list.getName()
-                            ,list.getTitle()
-                            ,list.getContent()
-                            ,list.getStartDate()
-                            ,list.getEndDate()
-                            ,list.getLocation()
-                            ,list.getRegDate()
-
-                    )).toList();
-
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
@@ -195,39 +168,24 @@ public class ScheduleServiceImplement implements ScheduleService {
     public ResponseEntity<? super GetWeeklyScheduleResponseDto> getWeeklySchedule(String start, String end, String email) {
         List<ScheduleListItem> weeklyScheduleListItems;
         try {
-            if(email == null){
-                return ResponseDto.validationFailed();
-            }
-            MemberEntity member = memberRepository.findByEmail(email);
-            OffsetDateTime startDateTime;
-            OffsetDateTime endDateTime;
-            LocalDate localDate = LocalDate.parse(start);
-            startDateTime = localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
-            localDate = LocalDate.parse(end);
-            endDateTime = localDate.atStartOfDay().atOffset(ZoneOffset.UTC);
+            if (email == null) return ResponseDto.validationFailed();
+            if (start == null || end == null) return ResponseDto.validationFailed();
+
+            MemberEntity member = findMemberByEmail(email);
+            if (member == null) return ResponseDto.notExistedUser();
+
+            OffsetDateTime startDateTime = LocalDate.parse(start).atStartOfDay().atOffset(ZoneOffset.UTC);
+            OffsetDateTime endDateTime = LocalDate.parse(end).atStartOfDay().atOffset(ZoneOffset.UTC);
 
             List<ScheduleListViewEntity> lists = scheduleListViewRepository
                     .findWeeklyScheduleByDate(member.getId(), startDateTime, endDateTime);
+            weeklyScheduleListItems = toScheduleListItems(lists);
 
-            weeklyScheduleListItems = lists.stream()
-                    .map(list -> new ScheduleListItem(
-                            list.getId()
-                            ,list.getName()
-                            ,list.getTitle()
-                            ,list.getContent()
-                            ,list.getStartDate()
-                            ,list.getEndDate()
-                            ,list.getLocation()
-                            ,list.getRegDate()
-
-                    )).toList();
-
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
 
         return GetWeeklyScheduleResponseDto.success(weeklyScheduleListItems);
     }
-
 }

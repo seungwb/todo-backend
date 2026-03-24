@@ -25,30 +25,30 @@ import java.util.Optional;
 public class TodoServiceImplement implements TodoService {
 
     private final TodoRepository todoRepository;
-
     private final MemberRepository memberRepository;
+
+    private MemberEntity findMemberByEmail(String email) {
+        if (email == null) return null;
+        return memberRepository.findByEmail(email);
+    }
 
     @Override
     public ResponseEntity<? super PostTodoResponseDto> saveTodo(PostTodoRequestDto dto, String email) {
-        try{
-            if(email == null) return ResponseDto.validationFailed();
+        try {
+            if (email == null) return ResponseDto.validationFailed();
+            MemberEntity member = findMemberByEmail(email);
+            if (member == null) return ResponseDto.notExistedUser();
 
-            MemberEntity member = memberRepository.findByEmail(email);
-
-            if(member == null) return PostTodoResponseDto.notExistedUser();
-
-            Long memberId = member.getId();
-            OffsetDateTime regDate = OffsetDateTime.now();
             TodoEntity todoEntity = TodoEntity.builder()
                     .title(dto.getTitle())
                     .content(dto.getContent())
                     .state(true)
-                    .regDate(regDate)
-                    .memberId(memberId)
+                    .regDate(OffsetDateTime.now())
+                    .memberId(member.getId())
                     .build();
 
             todoRepository.save(todoEntity);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseDto.databaseError();
         }
 
@@ -58,24 +58,21 @@ public class TodoServiceImplement implements TodoService {
     @Override
     public ResponseEntity<? super GetTodoResponseDto> getTodo(String email) {
         List<TodoListItem> todoListItems;
-        try{
-            if(email == null) return ResponseDto.validationFailed();
+        try {
+            if (email == null) return ResponseDto.validationFailed();
+            MemberEntity member = findMemberByEmail(email);
+            if (member == null) return ResponseDto.notExistedUser();
 
-            MemberEntity member = memberRepository.findByEmail(email);
-
-            if(member == null) return GetTodoResponseDto.notExistedUser();
             List<TodoEntity> lists = todoRepository.findByMemberId(member.getId());
-            todoListItems = lists.stream().map(
-                    list-> new TodoListItem(
-                            list.getId()
-                            ,list.getTitle()
-                            ,list.getContent()
-                            ,list.getRegDate()
-                            ,list.getState()
-                    )
-            ).toList();
+            todoListItems = lists.stream().map(list -> new TodoListItem(
+                    list.getId(),
+                    list.getTitle(),
+                    list.getContent(),
+                    list.getRegDate(),
+                    list.getState()
+            )).toList();
 
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseDto.databaseError();
         }
         return GetTodoResponseDto.success(todoListItems);
@@ -85,18 +82,15 @@ public class TodoServiceImplement implements TodoService {
     @Transactional
     public ResponseEntity<? super UpdateStateTodoResponseDto> updateState(Long id, UpdateStateTodoRequestDto requestBody, String email) {
         try {
-            if(email == null) return ResponseDto.validationFailed();
-
-            MemberEntity member = memberRepository.findByEmail(email);
-
-            if(member == null) return UpdateStateTodoResponseDto.notExistedUser();
+            if (email == null) return ResponseDto.validationFailed();
+            MemberEntity member = findMemberByEmail(email);
+            if (member == null) return ResponseDto.notExistedUser();
 
             Optional<TodoEntity> optionalTodo = todoRepository.findById(id);
-            if (optionalTodo.isEmpty()) return UpdateStateTodoResponseDto.notExistedTodo();
+            if (optionalTodo.isEmpty()) return ResponseDto.notExistedTodo();
 
-            TodoEntity todo = optionalTodo.get();
-            todo.updateState(requestBody);
-        } catch (Exception e){
+            optionalTodo.get().updateState(requestBody.getState());
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
@@ -107,18 +101,15 @@ public class TodoServiceImplement implements TodoService {
     @Transactional
     public ResponseEntity<? super UpdateTodoResponseDto> update(Long id, UpdateTodoRequestDto requestBody, String email) {
         try {
-            if(email == null) return ResponseDto.validationFailed();
-
-            MemberEntity member = memberRepository.findByEmail(email);
-
-            if(member == null) return UpdateTodoResponseDto.notExistedUser();
+            if (email == null) return ResponseDto.validationFailed();
+            MemberEntity member = findMemberByEmail(email);
+            if (member == null) return ResponseDto.notExistedUser();
 
             Optional<TodoEntity> optionalTodo = todoRepository.findById(id);
-            if (optionalTodo.isEmpty()) return UpdateTodoResponseDto.notExistedTodo();
+            if (optionalTodo.isEmpty()) return ResponseDto.notExistedTodo();
 
-            TodoEntity todo = optionalTodo.get();
-            todo.update(requestBody);
-        } catch (Exception e){
+            optionalTodo.get().update(requestBody.getTitle(), requestBody.getContent());
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
@@ -128,17 +119,15 @@ public class TodoServiceImplement implements TodoService {
     @Override
     public ResponseEntity<? super DeleteTodoResponseDto> delete(Long id, String email) {
         try {
-            if(email == null) return ResponseDto.validationFailed();
-
-            MemberEntity member = memberRepository.findByEmail(email);
-
-            if(member == null) return DeleteTodoResponseDto.notExistedUser();
+            if (email == null) return ResponseDto.validationFailed();
+            MemberEntity member = findMemberByEmail(email);
+            if (member == null) return ResponseDto.notExistedUser();
 
             Optional<TodoEntity> optionalTodo = todoRepository.findById(id);
-            if (optionalTodo.isEmpty()) return DeleteTodoResponseDto.notExistedTodo();
+            if (optionalTodo.isEmpty()) return ResponseDto.notExistedTodo();
 
             todoRepository.deleteById(id);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }

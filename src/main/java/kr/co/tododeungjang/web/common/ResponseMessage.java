@@ -15,6 +15,7 @@ public interface ResponseMessage {
 
     //HTTP Status 401
     String SIGN_IN_FAIL = "Login information mismatch.";
+    String AUTHORIZATION_FAILED = "Authorization Failed.";
 
     //HTTP Status 404
     String FIND_ID_FAIL = "User not found.";

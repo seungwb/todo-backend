@@ -13,14 +13,8 @@ public class PostScheduleResponseDto extends ResponseDto {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
-    public static ResponseEntity<PostScheduleResponseDto> success (){
+    public static ResponseEntity<PostScheduleResponseDto> success() {
         PostScheduleResponseDto result = new PostScheduleResponseDto();
-
         return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-    public static ResponseEntity<ResponseDto> notExistedUser(){
-        ResponseDto reslut = new ResponseDto(ResponseCode.NOT_EXISTED_USER, ResponseMessage.NOT_EXISTED_USER);
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(reslut);
     }
 }

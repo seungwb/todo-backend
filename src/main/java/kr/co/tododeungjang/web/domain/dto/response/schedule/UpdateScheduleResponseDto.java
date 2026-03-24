@@ -13,20 +13,8 @@ public class UpdateScheduleResponseDto extends ResponseDto {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
-    public static ResponseEntity<UpdateScheduleResponseDto> success (){
+    public static ResponseEntity<UpdateScheduleResponseDto> success() {
         UpdateScheduleResponseDto result = new UpdateScheduleResponseDto();
-
         return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-    public static ResponseEntity<ResponseDto> notExistedUser(){
-        ResponseDto reslut = new ResponseDto(ResponseCode.NOT_EXISTED_USER, ResponseMessage.NOT_EXISTED_USER);
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(reslut);
-    }
-
-    public static ResponseEntity<ResponseDto> notExistedSchedule(){
-        ResponseDto reslut = new ResponseDto(ResponseCode.NOT_EXISTED_SCHEDULE, ResponseMessage.NOT_EXISTED_SCHEDULE);
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(reslut);
     }
 }

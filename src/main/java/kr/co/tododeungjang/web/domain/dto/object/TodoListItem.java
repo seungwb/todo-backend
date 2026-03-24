@@ -1,6 +1,6 @@
 package kr.co.tododeungjang.web.domain.dto.object;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,17 +12,17 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class TodoListItem {
 
-    @NotBlank
+    @NotNull
     private Long id;
 
-    @NotBlank
+    @NotNull
     private String title;
 
     private String content;
 
-    @NotBlank
+    @NotNull
     private OffsetDateTime regDate;
 
-    @NotBlank
+    @NotNull
     private Boolean state;
 }

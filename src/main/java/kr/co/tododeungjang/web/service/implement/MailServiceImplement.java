@@ -9,6 +9,7 @@ import kr.co.tododeungjang.web.domain.dto.response.mail.PostSendMailResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.mail.PostVerificationNumberResponseDto;
 import kr.co.tododeungjang.web.domain.entity.MemberEntity;
 import kr.co.tododeungjang.web.repository.MemberRepository;
+import kr.co.tododeungjang.web.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -16,27 +17,33 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
+import java.security.SecureRandom;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
-public class MailServiceImplement {
+public class MailServiceImplement implements MailService {
 
     @Resource
-    private final JavaMailSender mailSender; //의존성 주입 문제
+    private final JavaMailSender mailSender;
     private final MemberRepository memberRepository;
-    private static String verificationNumber;
+
+    private final ConcurrentHashMap<String, String> verificationMap = new ConcurrentHashMap<>();
+    private static final SecureRandom secureRandom = new SecureRandom();
 
     @Value("${spring.mail.username}")
     private String fromMail;
 
-    public ResponseEntity<? super PostSendMailResponseDto> sendMail(FindPasswordRequestDto requestBody){
+    @Override
+    public ResponseEntity<? super PostSendMailResponseDto> sendMail(FindPasswordRequestDto requestBody) {
         try {
             String toMail = requestBody.getEmail();
             MemberEntity member = memberRepository.findByEmail(toMail);
             if (member == null) return PostSendMailResponseDto.notExistedUser();
-            Random random = new Random();
-            verificationNumber = String.format("%06d", random.nextInt(1000000));
+
+            String verificationNumber = String.format("%06d", secureRandom.nextInt(1000000));
+            verificationMap.put(toMail, verificationNumber);
+
             String subject = "비밀번호 찾기 인증번호";
             String text = "인증번호: " + verificationNumber + "\n인증번호를 입력해주세요.";
 
@@ -48,21 +55,27 @@ public class MailServiceImplement {
             helper.setFrom(fromMail);
 
             mailSender.send(message);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            ResponseDto.databaseError();
+            return ResponseDto.databaseError();
         }
 
         return PostSendMailResponseDto.success();
     }
 
-    public ResponseEntity<? super PostVerificationNumberResponseDto> verificationNumber(VerifiedNumberRequestDto requestBody){
+    @Override
+    public ResponseEntity<? super PostVerificationNumberResponseDto> verificationNumber(VerifiedNumberRequestDto requestBody) {
         try {
+            String email = requestBody.getEmail();
             String number = requestBody.getNumber();
-            if(!number.equals(verificationNumber)) return PostVerificationNumberResponseDto.notMatchNumber();
-        }catch (Exception e){
+            String storedNumber = verificationMap.get(email);
+            if (storedNumber == null || !number.equals(storedNumber)) {
+                return PostVerificationNumberResponseDto.notMatchNumber();
+            }
+            verificationMap.remove(email);
+        } catch (Exception e) {
             e.printStackTrace();
-            ResponseDto.databaseError();
+            return ResponseDto.databaseError();
         }
         return PostVerificationNumberResponseDto.success();
     }

@@ -16,6 +16,7 @@ public interface ResponseCode {
 
     //HTTP Status 401
     String SIGN_IN_FAIL = "SF";
+    String AUTHORIZATION_FAILED = "AF";
 
     //HTTP Status 404
     String FIND_ID_FAIL = "FF";

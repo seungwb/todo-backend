@@ -2,10 +2,8 @@ package kr.co.tododeungjang.web.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import kr.co.tododeungjang.web.domain.dto.request.schedule.UpdateScheduleRequestDto;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Getter
@@ -36,11 +34,11 @@ public class ScheduleEntity {
 
     private Long memberId;
 
-    public void update(UpdateScheduleRequestDto dto) {
-        this.title = dto.getTitle();
-        this.content = dto.getContent();
-        this.location = dto.getLocation();
-        this.startDate = dto.getStartDate();
-        this.endDate = dto.getEndDate();
+    public void update(String title, String content, String location, OffsetDateTime startDate, OffsetDateTime endDate) {
+        this.title = title;
+        this.content = content;
+        this.location = location;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 }

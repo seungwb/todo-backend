@@ -1,16 +1,9 @@
 package kr.co.tododeungjang.web.config;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-@Configuration
-public class CorsConfig implements WebMvcConfigurer {
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedMethods("*")
-                .allowedOrigins("*");
-    }
+/**
+ * CORS 설정이 {@link WebSecurityConfig#corsConfigurationSource()}로 통합되어 이 클래스는 더 이상 사용되지 않습니다.
+ * @deprecated {@link WebSecurityConfig} 참조
+ */
+@Deprecated
+public class CorsConfig {
 }
