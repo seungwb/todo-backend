@@ -2,100 +2,66 @@ package kr.co.tododeungjang.web.provider;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
-import kr.co.tododeungjang.web.domain.entity.MemberEntity;
-import kr.co.tododeungjang.web.domain.entity.MemberRole;
-import kr.co.tododeungjang.web.repository.MemberRepository;
-import kr.co.tododeungjang.web.repository.MemberRoleRepository;
-import lombok.RequiredArgsConstructor;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-
-import javax.crypto.SecretKey;
 
 @Component
-@RequiredArgsConstructor
 public class JwtProvider {
-
-    private final MemberRepository memberRepository;
-
-    private final MemberRoleRepository memberRoleRepository;
 
     @Value("${jwt.secret}")
     private String secret;
+
     public SecretKey secretKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    //JWT 생성 메서드
-    public String create(String email){
-        Date expiredDate = Date.from(Instant.now().plus(1, ChronoUnit.HOURS)); //현재시간에서 1시간 추가
+    public String create(String email, String role) {
+        Date expiredDate = Date.from(Instant.now().plus(1, ChronoUnit.HOURS));
 
-        MemberEntity member = memberRepository.findByEmail(email);
-        MemberRole memberRole = memberRoleRepository.findByMemberId(member.getId());
-
-        String jwt = Jwts.builder()
-                .signWith(secretKey())        //암호화 알고리즘
-                .subject(email)             //사용자 식별자 값
-                .issuedAt(new Date())       //생성 시간
-                .expiration(expiredDate)    //만료 시간
-                .claim("role", memberRole.getRoleName())
-                .compact();                 //압축하여 객체 생성
-
-        return jwt;
+        return Jwts.builder()
+                .signWith(secretKey())
+                .subject(email)
+                .issuedAt(new Date())
+                .expiration(expiredDate)
+                .claim("role", role)
+                .compact();
     }
-    // expirationTime getter
+
     public int getExpirationTime(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith(secretKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-
-        Date expiration = claims.getExpiration();
-        long expirationInSeconds = (expiration.getTime() - System.currentTimeMillis()) / 1000; // 초 단위 변환
-
+        Claims claims = parseClaims(token);
+        if (claims == null) return 0;
+        long expirationInSeconds = (claims.getExpiration().getTime() - System.currentTimeMillis()) / 1000;
         return (int) expirationInSeconds;
     }
 
-    //JWT 검증 메서드
-    public String validateEmail(String jwt){
-        Claims claims = null;
-
-        try{
-            claims = Jwts.parser().verifyWith(secretKey())    //서명 검즘
-                    .build()                                //빌드
-                    .parseSignedClaims(jwt)                 //JWT 파싱
-                    .getPayload();                          //Claims 추출
-
-        } catch (JwtException e){
-            e.printStackTrace();
-            return null;
-        }
-
-        return claims.getSubject();
+    public String validateEmail(String jwt) {
+        Claims claims = parseClaims(jwt);
+        return claims != null ? claims.getSubject() : null;
     }
 
-    public String validateRole(String jwt){
-        Claims claims = null;
+    public String validateRole(String jwt) {
+        Claims claims = parseClaims(jwt);
+        return claims != null ? (String) claims.get("role") : null;
+    }
 
-        try{
-            claims = Jwts.parser().verifyWith(secretKey())    //서명 검즘
-                    .build()                                //빌드
-                    .parseSignedClaims(jwt)                 //JWT 파싱
-                    .getPayload();                          //Claims 추출
-
-        } catch (JwtException e){
+    private Claims parseClaims(String jwt) {
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey())
+                    .build()
+                    .parseSignedClaims(jwt)
+                    .getPayload();
+        } catch (JwtException e) {
             e.printStackTrace();
             return null;
         }
-
-        return (String)claims.get("role");
     }
 }

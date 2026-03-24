@@ -1,19 +1,15 @@
-package kr.co.tododeungjang.web.domain.dto.response;
+package kr.co.tododeungjang.web.domain.dto.response.schedule;
 
 import kr.co.tododeungjang.web.common.ResponseCode;
 import kr.co.tododeungjang.web.common.ResponseMessage;
 import kr.co.tododeungjang.web.domain.dto.object.ScheduleListItem;
+import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-/**
- * @deprecated schedule 패키지로 이동됨:
- *   {@link kr.co.tododeungjang.web.domain.dto.response.schedule.GetTodayScheduleResponseDto}
- */
-@Deprecated
 @Getter
 public class GetTodayScheduleResponseDto extends ResponseDto {
 

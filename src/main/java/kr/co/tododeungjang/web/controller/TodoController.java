@@ -12,7 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/todo")
+@RequestMapping("/api/v2/todo")
 @RequiredArgsConstructor
 public class TodoController {
 
@@ -21,17 +21,13 @@ public class TodoController {
     @PostMapping("")
     public ResponseEntity<? super PostTodoResponseDto> createTodo(
             @Valid @RequestBody PostTodoRequestDto requestBody,
-            @AuthenticationPrincipal String email
-            ){
-
-
+            @AuthenticationPrincipal String email) {
         return todoService.saveTodo(requestBody, email);
     }
 
     @GetMapping("")
     public ResponseEntity<? super GetTodoResponseDto> getTodo(
-            @AuthenticationPrincipal String email
-    ){
+            @AuthenticationPrincipal String email) {
         return todoService.getTodo(email);
     }
 
@@ -39,28 +35,22 @@ public class TodoController {
     public ResponseEntity<? super UpdateStateTodoResponseDto> updateState(
             @PathVariable("id") Long id,
             @Valid @RequestBody UpdateStateTodoRequestDto requestBody,
-            @AuthenticationPrincipal String email
-    ){
-
+            @AuthenticationPrincipal String email) {
         return todoService.updateState(id, requestBody, email);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<? super UpdateTodoResponseDto> update(
-            @PathVariable("id") Long id
-            , @Valid @RequestBody UpdateTodoRequestDto requestBody
-            , @AuthenticationPrincipal String email
-            ){
-
+            @PathVariable("id") Long id,
+            @Valid @RequestBody UpdateTodoRequestDto requestBody,
+            @AuthenticationPrincipal String email) {
         return todoService.update(id, requestBody, email);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<? super DeleteTodoResponseDto> delete(
-        @PathVariable("id") Long id
-        , @AuthenticationPrincipal String email
-    ){
-
+            @PathVariable("id") Long id,
+            @AuthenticationPrincipal String email) {
         return todoService.delete(id, email);
     }
 }

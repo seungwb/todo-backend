@@ -23,4 +23,19 @@ public class ResponseDto {
         ResponseDto responseBody = new ResponseDto(ResponseCode.VALIDATION_FAILED, ResponseMessage.VALIDATION_FAILED);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
     }
+
+    public static ResponseEntity<ResponseDto> notExistedUser(){
+        ResponseDto result = new ResponseDto(ResponseCode.NOT_EXISTED_USER, ResponseMessage.NOT_EXISTED_USER);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
+    }
+
+    public static ResponseEntity<ResponseDto> notExistedTodo(){
+        ResponseDto result = new ResponseDto(ResponseCode.NOT_EXISTED_TODO, ResponseMessage.NOT_EXISTED_TODO);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    }
+
+    public static ResponseEntity<ResponseDto> notExistedSchedule(){
+        ResponseDto result = new ResponseDto(ResponseCode.NOT_EXISTED_SCHEDULE, ResponseMessage.NOT_EXISTED_SCHEDULE);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    }
 }

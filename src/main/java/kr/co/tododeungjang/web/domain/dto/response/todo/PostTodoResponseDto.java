@@ -9,16 +9,10 @@ import org.springframework.http.ResponseEntity;
 public class PostTodoResponseDto extends ResponseDto {
     public PostTodoResponseDto() {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
-
     }
 
-    public static ResponseEntity<PostTodoResponseDto> success(){
+    public static ResponseEntity<PostTodoResponseDto> success() {
         PostTodoResponseDto result = new PostTodoResponseDto();
         return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-    public static ResponseEntity<ResponseDto> notExistedUser(){
-        ResponseDto reslut = new ResponseDto(ResponseCode.NOT_EXISTED_USER, ResponseMessage.NOT_EXISTED_USER);
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(reslut);
     }
 }

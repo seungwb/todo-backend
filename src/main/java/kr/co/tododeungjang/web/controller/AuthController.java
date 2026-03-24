@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v2/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -30,14 +30,13 @@ public class AuthController {
 
     @PostMapping("/sign-in")
     public ResponseEntity<? super SignInResponseDto> signIn(
-            @RequestBody @Valid SignInRequestDto requestBody){
+            @RequestBody @Valid SignInRequestDto requestBody) {
         return authService.signIn(requestBody);
     }
 
     @PostMapping("/find-id")
     public ResponseEntity<? super FindIdResponseDto> findId(
-            @RequestBody @Valid FindIdRequestDto requestBody
-            ){
+            @RequestBody @Valid FindIdRequestDto requestBody) {
         return authService.findId(requestBody);
     }
 }

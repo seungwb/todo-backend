@@ -11,20 +11,8 @@ public class UpdateStateTodoResponseDto extends ResponseDto {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     }
 
-    public static ResponseEntity<UpdateStateTodoResponseDto> success(){
+    public static ResponseEntity<UpdateStateTodoResponseDto> success() {
         UpdateStateTodoResponseDto result = new UpdateStateTodoResponseDto();
-
         return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-    public static ResponseEntity<ResponseDto> notExistedUser(){
-        ResponseDto reslut = new ResponseDto(ResponseCode.NOT_EXISTED_USER, ResponseMessage.NOT_EXISTED_USER);
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(reslut);
-    }
-
-    public static ResponseEntity<ResponseDto> notExistedTodo(){
-        ResponseDto reslut = new ResponseDto(ResponseCode.NOT_EXISTED_TODO, ResponseMessage.NOT_EXISTED_TODO);
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(reslut);
     }
 }

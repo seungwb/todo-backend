@@ -20,15 +20,8 @@ public class GetTodoResponseDto extends ResponseDto {
         this.todoListItems = todoListItems;
     }
 
-    public static ResponseEntity<GetTodoResponseDto> success(List<TodoListItem> todoListItems){
+    public static ResponseEntity<GetTodoResponseDto> success(List<TodoListItem> todoListItems) {
         GetTodoResponseDto result = new GetTodoResponseDto(todoListItems);
-
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
-    public static ResponseEntity<ResponseDto> notExistedUser(){
-        ResponseDto reslut = new ResponseDto(ResponseCode.NOT_EXISTED_USER, ResponseMessage.NOT_EXISTED_USER);
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(reslut);
-    }
-
 }
