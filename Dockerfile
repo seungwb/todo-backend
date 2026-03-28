@@ -1,11 +1,11 @@
-# 1. OpenJDK 17 (Oracle Linux 기반)
-FROM openjdk:17
+# 1. Eclipse Temurin 17 (openjdk:17 공식 후속 이미지)
+FROM eclipse-temurin:17-jdk
 
 # 2. 작업 디렉토리 설정
 WORKDIR /app
 
 # 3. 필수 유틸리티 (`xargs` 포함) 설치
-RUN microdnf install -y findutils
+RUN apt-get update && apt-get install -y --no-install-recommends findutils && rm -rf /var/lib/apt/lists/*
 
 
 COPY . .
