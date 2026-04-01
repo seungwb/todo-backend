@@ -141,3 +141,16 @@
 - **변경 파일**: `ScheduleController.java`
 - **문제**: `import org.apache.coyote.Response` (Tomcat 내부 클래스), `import java.time.OffsetDateTime` 미사용 import
 - **수정**: 두 import 모두 제거
+
+---
+
+# 신규 기능 구현 (2026-04-01)
+
+## 19. 비밀번호 재설정
+이메일 인증 완료 후 새 비밀번호로 변경할 수 있는 기능. 인증 상태를 `VerificationStore` Bean으로 관리하고, `PUT /api/v2/auth/reset-password` 엔드포인트로 비밀번호 업데이트.
+
+## 20. 공지사항
+공지사항 CRUD 기능. 목록 조회·상세 조회(조회수 증가)·작성·수정·삭제를 제공하며, 작성·수정·삭제는 로그인한 사용자만 가능. `GET /api/v2/notice/**` 는 비로그인도 허용.
+
+## 21. 마이페이지
+회원정보 조회·수정(이름/전화번호), 비밀번호 변경, 회원 탈퇴 기능. 탈퇴 시 연관된 Todo·Schedule·MemberRole을 순서대로 삭제 후 회원 삭제.

@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface MemberRoleRepository extends JpaRepository<MemberRole, Long> {
 
     MemberRole findByMemberId(Long id);
+    void deleteByMemberId(Long memberId);
 }

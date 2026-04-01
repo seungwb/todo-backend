@@ -38,4 +38,9 @@ public class ResponseDto {
         ResponseDto result = new ResponseDto(ResponseCode.NOT_EXISTED_SCHEDULE, ResponseMessage.NOT_EXISTED_SCHEDULE);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
     }
+
+    public static ResponseEntity<ResponseDto> notExistedNotice(){
+        ResponseDto result = new ResponseDto(ResponseCode.NOT_EXISTED_NOTICE, ResponseMessage.NOT_EXISTED_NOTICE);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    }
 }

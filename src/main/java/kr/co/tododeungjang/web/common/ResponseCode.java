@@ -12,11 +12,13 @@ public interface ResponseCode {
     String NOT_EXISTED_USER = "NU";
     String NOT_EXISTED_SCHEDULE = "NS";
     String NOT_EXISTED_TODO = "NT";
+    String NOT_EXISTED_NOTICE = "NNO";
     String NOT_MATCH_NUMBER = "NN";
 
     //HTTP Status 401
     String SIGN_IN_FAIL = "SF";
     String AUTHORIZATION_FAILED = "AF";
+    String WRONG_PASSWORD = "WP";
 
     //HTTP Status 404
     String FIND_ID_FAIL = "FF";

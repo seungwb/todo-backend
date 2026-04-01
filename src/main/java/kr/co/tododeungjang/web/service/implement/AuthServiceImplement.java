@@ -1,10 +1,13 @@
 package kr.co.tododeungjang.web.service.implement;
 
+import kr.co.tododeungjang.web.common.VerificationStore;
 import kr.co.tododeungjang.web.domain.dto.request.auth.FindIdRequestDto;
+import kr.co.tododeungjang.web.domain.dto.request.auth.ResetPasswordRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.auth.SignInRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.auth.SignUpRequestDto;
 import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.auth.FindIdResponseDto;
+import kr.co.tododeungjang.web.domain.dto.response.auth.ResetPasswordResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.auth.SignInResponseDto;
 import kr.co.tododeungjang.web.domain.dto.response.auth.SignUpResponseDto;
 import kr.co.tododeungjang.web.domain.entity.MemberEntity;
@@ -32,6 +35,7 @@ public class AuthServiceImplement implements AuthService {
     private final MemberRoleRepository memberRoleRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private final VerificationStore verificationStore;
 
     @Override
     public ResponseEntity<? super SignUpResponseDto> signUp(SignUpRequestDto dto) {
@@ -125,5 +129,32 @@ public class AuthServiceImplement implements AuthService {
             return ResponseDto.databaseError();
         }
         return FindIdResponseDto.success(email);
+    }
+
+    @Override
+    public ResponseEntity<? super ResetPasswordResponseDto> resetPassword(ResetPasswordRequestDto dto) {
+        try {
+            String email = dto.getEmail();
+
+            if (!verificationStore.isVerified(email)) {
+                return ResetPasswordResponseDto.notVerified();
+            }
+
+            MemberEntity memberEntity = memberRepository.findByEmail(email);
+            if (memberEntity == null) {
+                return ResponseDto.notExistedUser();
+            }
+
+            String encodedPassword = passwordEncoder.encode(dto.getNewPassword());
+            memberEntity.setPassword(encodedPassword);
+            memberRepository.save(memberEntity);
+
+            verificationStore.removeVerified(email);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return ResetPasswordResponseDto.success();
     }
 }
