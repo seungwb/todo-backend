@@ -8,4 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> {
+
+    void deleteByMemberId(Long memberId);
 }

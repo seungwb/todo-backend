@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 import java.time.LocalDateTime;
@@ -27,8 +28,14 @@ public class MemberEntity {
 
     private String phone;
 
+    @Setter
     private String password;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime joinDate;
+
+    public void update(String name, String phone) {
+        this.name = name;
+        this.phone = phone;
+    }
 }

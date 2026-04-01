@@ -2,16 +2,12 @@ package kr.co.tododeungjang.web.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @Entity
@@ -30,4 +26,16 @@ public class NoticeEntity {
     private LocalDateTime regDate;
 
     private Long memberId;
+
+    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    private Long viewCount;
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    public void incrementViewCount() {
+        this.viewCount++;
+    }
 }

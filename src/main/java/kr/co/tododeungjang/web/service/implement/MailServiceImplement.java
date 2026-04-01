@@ -2,6 +2,7 @@ package kr.co.tododeungjang.web.service.implement;
 
 import jakarta.annotation.Resource;
 import jakarta.mail.internet.MimeMessage;
+import kr.co.tododeungjang.web.common.VerificationStore;
 import kr.co.tododeungjang.web.domain.dto.request.mail.FindPasswordRequestDto;
 import kr.co.tododeungjang.web.domain.dto.request.mail.VerifiedNumberRequestDto;
 import kr.co.tododeungjang.web.domain.dto.response.ResponseDto;
@@ -18,7 +19,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +27,8 @@ public class MailServiceImplement implements MailService {
     @Resource
     private final JavaMailSender mailSender;
     private final MemberRepository memberRepository;
+    private final VerificationStore verificationStore;
 
-    private final ConcurrentHashMap<String, String> verificationMap = new ConcurrentHashMap<>();
     private static final SecureRandom secureRandom = new SecureRandom();
 
     @Value("${spring.mail.username}")
@@ -42,7 +42,7 @@ public class MailServiceImplement implements MailService {
             if (member == null) return PostSendMailResponseDto.notExistedUser();
 
             String verificationNumber = String.format("%06d", secureRandom.nextInt(1000000));
-            verificationMap.put(toMail, verificationNumber);
+            verificationStore.putCode(toMail, verificationNumber);
 
             String subject = "비밀번호 찾기 인증번호";
             String text = "인증번호: " + verificationNumber + "\n인증번호를 입력해주세요.";
@@ -68,11 +68,12 @@ public class MailServiceImplement implements MailService {
         try {
             String email = requestBody.getEmail();
             String number = requestBody.getNumber();
-            String storedNumber = verificationMap.get(email);
+            String storedNumber = verificationStore.getCode(email);
             if (storedNumber == null || !number.equals(storedNumber)) {
                 return PostVerificationNumberResponseDto.notMatchNumber();
             }
-            verificationMap.remove(email);
+            verificationStore.removeCode(email);
+            verificationStore.markVerified(email);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();

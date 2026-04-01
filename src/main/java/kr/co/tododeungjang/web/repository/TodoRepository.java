@@ -11,4 +11,5 @@ public interface TodoRepository extends JpaRepository<TodoEntity, Long> {
 
 
     List<TodoEntity> findByMemberId(Long memberId);
+    void deleteByMemberId(Long memberId);
 }
